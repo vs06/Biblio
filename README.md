@@ -1,2 +1,2 @@
 # BiblioEclesia
-Library Management
+Church's Book Catalog Management
