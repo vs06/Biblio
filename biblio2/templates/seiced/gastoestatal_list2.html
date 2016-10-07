@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load seiced_tags %}
+
+{% block extrahead %}
+
+<style type="text/css">
+
+#myModal .modal-content
+{
+  overflow:auto;
+}
+</style>
+
+<script>
+  $(function() {
+    $( "#id_dtgasto" ).datepicker({
+  		language: "pt-BR",
+  		format: "dd/mm/yyyy",  
+    });
+    
+    $("#myModal").on("show.bs.modal", function(e) {
+    
+    	$('.modal-body').html('<img src="/static/images/ajax-loader.gif" />');
+	    var button = $(e.relatedTarget);
+	    var link = button.data('href');
+	    $.get(link, function( data ) {
+			$( ".modal-body" ).html( data );
+	  	});
+	 });
+    
+  });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Detalhes do Gasto</h4>
+      </div>
+      <div class="modal-body">
+      	<img src="/static/images/ajax-loader.gif" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Gastos Estatal</h3>
+	</div>
+	<div class="table table-striped">
+		{% include 'filter_form.html' %}
+		{% if is_paginated %}
+	            <ul class="pagination">
+	                {% if page_obj.has_previous %}
+	                	<li>
+					      <a href="/seiced/gastoestatal/?page={{ page_obj.previous_page_number }}">
+					      	<span aria-hidden="true">
+					      		&laquo;
+					      	</span>
+					      </a>
+					    </li>
+	                {% endif %}
+	                <li>
+		                <span class="page-current">
+		                    P&aacute;gina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+		                </span>
+	                </li>
+	                {% if page_obj.has_next %}
+	                    <li>
+					      <a href="/seiced/gastoestatal/?page={{ page_obj.next_page_number }}">
+					        <span aria-hidden="true">&raquo;</span>
+					      </a>
+					    </li>
+	                {% endif %}
+	            </ul>
+	    {% endif %}
+		<table class="table">
+			<tr>
+				<th>Numero Gasto</th>
+				<th>Ano Gasto</th>
+				<th>Data Gasto</th>
+				<th>Valor Gasto</th>
+				<th>Detalhes</th>
+				<th>Estornos</th>
+			</tr>
+	        {% for obj in object_list %}
+			<tr>
+				<td>{{ obj.nrgasto }}</td>
+				<td>{{ obj.nranogasto }}</td>
+				<td>{{ obj.dtgasto }}</td>
+				<td>{{ obj.vlgasto }}</td>
+				<td>
+					{% if obj.detalhes_gasto.count > 0 %}
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" data-href="/seiced/AjaxDetalhesGastoestatal/{{obj.id}}/">
+						Detalhes
+					</button>
+					{% else %}
+					<p>Sem detalhes</p>
+					{% endif %}
+				</td>
+				<td>
+					{% if obj.estornos.count > 0 %}
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+						<div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="headingOne">
+								<h4 class="panel-title">
+									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#estornoCollapseOne{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapseOne"> Estorno </a>
+								</h4>
+							</div>
+							<div id="estornoCollapseOne{{ forloop.counter0 }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+								<div class="panel-body">
+									<table class="table">
+										<tr>
+											<th>{{ estorno_gasto|get_field_verbose_name:"nrestorno" }}</th>
+											<th>{{ estorno_gasto|get_field_verbose_name:"nranoestorno" }}</th>
+											<th>{{ estorno_gasto|get_field_verbose_name:"dtestorno" }}</th>
+											<th>{{ estorno_gasto|get_field_verbose_name:"vlestorno" }}</th>
+											<th></th>											
+										</tr>
+										{% for estorno in obj.estornos.all %}
+										<tr>
+											<td>{{ estorno.nrestorno }}</td>
+											<td>{{ estorno.nranoestorno }}</td>
+											<td>{{ estorno.dtestorno }}</td>
+											<td>{{ estorno.vlestorno }}</td>
+											<td>
+											
+											<!-- ################################################## 
+												 Detalhes Estorno 
+												 ##################################################-->
+
+												{% if estorno.detalhes_estorno.count > 0 %}
+												<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+													<div class="panel panel-default">
+														<div class="panel-heading" role="tab" id="headingOne">
+															<h4 class="panel-title">
+																<a role="button" data-toggle="collapse" data-parent="#accordion" href="#estornoDetalheCollapseOne{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapseOne"> Detalhes do Estorno </a>
+															</h4>
+														</div>
+														<div id="estornoDetalheCollapseOne{{ forloop.counter0 }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+															<div class="panel-body">
+																<table class="table">
+																	<tr>
+																		<th>{{ estorno_gasto_detalhes|get_field_verbose_name:"nrdetalhegasto" }}</th>
+																		<th>{{ estorno_gasto_detalhes|get_field_verbose_name:"nranodetalhegasto" }}</th>
+																		<th>{{ estorno_gasto_detalhes|get_field_verbose_name:"dtestorno" }}</th>
+																		<th>{{ estorno_gasto_detalhes|get_field_verbose_name:"vlestorno" }}</th>
+																													
+																	</tr>
+																	{% for estorno_gasto_detalhe in estorno.detalhes_estorno.all %}
+																	<tr>
+																		<td>{{ estorno_gasto_detalhe.nrdetalhegasto }}</td>
+																		<td>{{ estorno_gasto_detalhe.nranodetalhegasto }}</td>
+																		<td>{{ estorno_gasto_detalhe.dtestorno }}</td>
+																		<td>{{ estorno_gasto_detalhe.vlestorno }}</td>
+																	</tr>
+																	{% endfor %}
+																</table>
+															</div>
+														</div>
+													</div>
+												{% else %}
+												<p>Sem detalhes deste estorno</p>
+												{% endif %}
+	
+
+											<!--FIM Detalhes Estorno-->
+											</td>
+										</tr>
+										{% endfor %}
+									</table>
+								</div>
+							</div>
+						</div>
+					{% else %}
+					<p>Sem estorno</p>
+					{% endif %}
+				</td>
+			</tr>
+	        {% endfor %}
+		</table>
+	</div>
+
+</div>
+{% endblock %}

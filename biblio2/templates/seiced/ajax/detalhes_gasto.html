@@ -1,0 +1,46 @@
+{% load seiced_tags %}
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" >
+	<div class="panel panel-default">
+		<div class="panel-heading" role="tab" id="headingOne">
+			<h4 class="panel-title">
+				<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne"> Detalhes do Gasto </a>
+			</h4>
+		</div>
+		<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+			<div class="panel-body" style="overflow: auto;">
+				<table class="table">
+					<tr>
+						<th>{{ detalhe_gasto|get_field_verbose_name:"nrcpfordenador" }}</th>
+						<th>{{ detalhe_gasto|get_field_verbose_name:"idtipogastoestatal" }}</th>
+						<th>{{ detalhe_gasto|get_field_verbose_name:"idtipodocfiscal" }}</th>
+						<th>{{ detalhe_gasto|get_field_verbose_name:"dtdocfiscal" }}</th>
+						<th>{{ detalhe_gasto|get_field_verbose_name:"nrdocfiscal" }}</th>
+						<th>{{ detalhe_gasto|get_field_verbose_name:"idtiposeriedocfiscal" }}</th>
+						<th>{{ detalhe_gasto|get_field_verbose_name:"dstiposerie" }}</th>
+						<th>{{ detalhe_gasto|get_field_verbose_name:"idtipodoccredor" }}</th>
+						<th>{{ detalhe_gasto|get_field_verbose_name:"nrdoccredor" }}</th>
+						<th>{{ detalhe_gasto|get_field_verbose_name:"idtipogrupoitem" }}</th>
+						<th>{{ detalhe_gasto|get_field_verbose_name:"vldetalhegasto" }}</th>
+																	
+					</tr>
+					{% for detalhe in detalhes_gasto.all %}
+					<tr>
+						<td>{{ detalhe.nrcpfordenador }}</td>
+						<td>{{ detalhe.idtipogastoestatal }}</td>
+						<td>{{ detalhe.idtipodocfiscal }}</td>
+						<td>{{ detalhe.dtdocfiscal }}</td>
+						<td>{{ detalhe.nrdocfiscal }}</td>
+						<td>{{ detalhe.idtiposeriedocfiscal }}</td>
+						<td>{{ detalhe.dstiposerie }}</td>
+						<td>{{ detalhe.idtipodoccredor }}</td>
+						<td>{{ detalhe.nrdoccredor }}</td>
+						<td>{{ detalhe.idtipogrupoitem }}</td>
+						<td>{{ detalhe.vldetalhegasto }}</td> 
+					</tr>
+					{% endfor %}
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

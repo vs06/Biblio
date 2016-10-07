@@ -1,0 +1,470 @@
+ 
+ {% extends "base.html" %}
+{% load seiced_tags %}
+
+{% block content %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+		<h3 class="panel-title">Licitacoes</h3>
+	</div>
+	<div class="table table-striped">
+	{% include 'filter_form.html' %}
+	{% if is_paginated %}
+	            <ul class="pagination">
+	                {% if page_obj.has_previous %}
+	                	<li>
+					      <a href="/seiced/licitacoes/?page={{ page_obj.previous_page_number }}">
+					      	<span aria-hidden="true">
+					      		&laquo;
+					      	</span>
+					      </a>
+					    </li>
+	                {% endif %}
+	                <li>
+		                <span class="page-current">
+		                    P&aacute;gina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+		                </span>
+	                </li>
+	                {% if page_obj.has_next %}
+	                    <li>
+					      <a href="/seiced/licitacoes/?page={{ page_obj.next_page_number }}">
+					        <span aria-hidden="true">&raquo;</span>
+					      </a>
+					    </li>
+	                {% endif %}
+	            </ul>
+	    {% endif %}
+		<table class="table">
+			<tr>
+				<th>Pessoa</th>
+				<th>Ato convocatorio</th>
+				<th>Ano</th>
+				<th>Modalidade</th>
+				<th>Entidade origem</th>
+				<th>Numero do processo</th>
+				<th>Tipo de Avaliacao</th>
+				<th>Classificacao do Objeto</th>
+				<th>Descricao do Objeto</th>
+				<th>Regime de Execucao</th>
+				<th>Natureza do Processo Licitatorio</th>
+				<th>Data do Ato Convocatorio</th>
+				<th>Data de Abertura</th>
+				<th>CPF Agente Publico</th>
+				<th>Beneficios da Lei Complementar n. 123/2006</th>
+			</tr>
+			{% for obj in object_list %}
+		    <tr>
+		        <td>{{ obj.idpessoa }}</td>
+		        <td>{{ obj.nrlicitacao }}</td>
+		        <td>{{ obj.nranolicitacao }}</td>
+		        <td>{{ obj.idmodalidadelicitacao }}</td>
+		        <td>{{ obj.ididentidadeorigem }}</td>
+		        <td>{{ obj.nrprocessoorigem }}</td>
+		        {% for dados in obj.dados_licitacao.all %}
+		        <td>{{ dados.idavaliacaolicitacao }}</td>
+		        <td>{{ dados.idclassificacaoobjetolicitacao }}</td>
+		        <td>{{ dados.dsobjeto }}</td>
+		        <td>{{ dados.idregimeexecucaolicitacao }}</td>
+		        <td>{{ dados.idnaturezalicitacao }}</td>
+		        <td>{{ dados.dtatoconvocatorio }}</td>
+		        <td>{{ dados.dtabertura }}</td>
+		        <td>{{ dados.nrcpf }}</td>
+		        <td>{{ dados.idbeneficiomicroempresa }}</td>
+		        {% endfor %}
+		        <td>
+		        {% if obj.mapa_licitacao.count > 0 %}
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+						<div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="headingOne">
+								<h4 class="panel-title">
+									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapseOne"> Mapa </a>
+								</h4>
+							</div>
+							<div id="collapseOne{{ forloop.counter0 }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+								<div class="panel-body">
+									<table class="table">
+										<tr>
+											<th>Lote</th>
+											<th>Item</th>
+											<th>Descricao do Item</th>
+											<th>Quantidade do Item</th>
+											<th>Unidade de Medida</th>
+											<th>Tipo de Grupo do Item</th>
+											<th>Tipo de Classe do Item</th>						
+										</tr>
+										{% for mapa in obj.mapa_licitacao.all %}
+										<tr>
+											<td>{{ mapa.nrlote }}</td>
+											<td>{{ mapa.nritem }}</td>
+											<td>{{ mapa.dsitem }}</td>
+											<td>{{ mapa.qtitem }}</td>
+											<td>{{ mapa.idunidademedida }}</td>
+											<td>{{ mapa.idtipogrupoitem }}</td>
+											<td>{{ mapa.idtipoclasseitem }}</td> 
+										</tr>
+										{% endfor %}
+									</table>
+								</div>
+							</div>
+						</div>
+					{% else %}
+					<p>Sem detalhes</p>
+					{% endif %}
+		        </td>
+		        <td>
+					{% if obj.parecer_licitacao.count > 0 %}
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+						<div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="headingOne">
+								<h4 class="panel-title">
+									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#parecerCollapseOne{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapseOne"> Parecer </a>
+								</h4>
+							</div>
+							<div id="parecerCollapseOne{{ forloop.counter0 }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+								<div class="panel-body">
+									<table class="table">
+										<tr>
+											<th>Numero da Operacao</th>
+											<th>Ano da Operacao</th>		
+											<th>CPF do Responsavel</th>
+											<th>Tipo de Parecer</th>	
+											<th>Data do Parecer</th>
+											<th>Numero do Parecer</th>
+											<th>Ano do Parecer</th>										
+										</tr>
+										{% for parecer in obj.parecer_licitacao.all %}
+										<tr>
+											<td>{{ parecer.nroperacao }}</td>
+											<td>{{ parecer.nranooperacao }}</td>
+											<td>{{ parecer.nrcpfresponsavel }}</td>
+											<td>{{ parecer.idtipoparecerlicitacao }}</td>
+											<td>{{ parecer.dtparecer }}</td>
+											<td>{{ parecer.nrparecer }}</td>
+											<td>{{ parecer.nranoparecer }}</td>
+										</tr>
+										{% endfor %}
+									</table>
+								</div>
+							</div>
+						</div>
+					{% else %}
+					<p>Sem parecer</p>
+					{% endif %}
+				</td>
+				<!-- Publicacaoeditallicitacao -->
+				<td>
+					{% if obj.publicacao_licitacao.count > 0 %}
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+						<div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="headingOne">
+								<h4 class="panel-title">
+									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#publicacaoCollapseOne{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapseOne"> Publicacao </a>
+								</h4>
+							</div>
+							<div id="publicacaoCollapseOne{{ forloop.counter0 }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+								<div class="panel-body">
+									<table class="table">
+										<tr>
+											<th>Numero da Operacao</th>
+											<th>Ano da Operacao</th>		
+											<th>Tipo de Veiculo de Publicacao</th>
+											<th>Data do publicacao</th>								
+										</tr>
+										{% for publicacao in obj.publicacao_licitacao.all %}
+										<tr>
+											<td>{{ publicacao.nroperacao }}</td>
+											<td>{{ publicacao.nranooperacao }}</td>
+											<td>{{ publicacao.idtipoveiculopublicacao }}</td>
+											<td>{{ publicacao.dtpublicacao }}</td>
+										</tr>
+										{% endfor %}
+									</table>
+								</div>
+							</div>
+						</div>
+					{% else %}
+					<p>Sem publicacao</p>
+					{% endif %}
+				</td>
+			<!-- FIM publicacaoeditallicitacao -->
+			<!-- Situacaolicitacao -->
+				<td>
+					{% if obj.situacao_licitacao.count > 0 %}
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+						<div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="headingOne">
+								<h4 class="panel-title">
+									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#situacaoCollapseOne{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapseOne"> Situacao </a>
+								</h4>
+							</div>
+							<div id="situacaoCollapseOne{{ forloop.counter0 }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+								<div class="panel-body">
+									<table class="table">
+										<tr>
+											<th>Data da Ocorrencia</th>
+											<th>Situacao da Licitacao</th>						
+										</tr>
+										{% for situacao in obj.situacao_licitacao.all %}
+										<tr>
+											<td>{{ situacao.dtocorrencia }}</td>
+											<td>{{ situacao.idtiposituacaolicitacao }}</td>
+										</tr>
+										{% endfor %}
+									</table>
+								</div>
+							</div>
+						</div>
+					{% else %}
+					<p>Sem situacao</p>
+					{% endif %}
+				</td>
+				<!-- FIM situacaolicitacao -->
+				<!-- impugnacaolicitacao -->
+				<td>
+					{% if obj.impugnacao_licitacao.count > 0 %}
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+						<div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="headingOne">
+								<h4 class="panel-title">
+									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#impugnacaoCollapseOne{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapseOne"> Impugnacao </a>
+								</h4>
+							</div>
+							<div id="impugnacaoCollapseOne{{ forloop.counter0 }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+								<div class="panel-body">
+									<table class="table">
+										<tr>
+											<th>Numero da Impugnacao</th>
+											<th>Ano da Impugnacao</th>
+											<th>Objeto da Impugnacao</th>
+											<th>Data da Impugnacao</th>
+											<th>Impugnante</th>
+											<th>CPF/CNPJ Impugnante</th>						
+										</tr>
+										{% for impugnacao in obj.impugnacao_licitacao.all %}
+										<tr>
+											<td>{{ impugnacao.nroperacao }}</td>
+											<td>{{ impugnacao.nranooperacao }}</td>
+											<td>{{ impugnacao.idtipoobjetoimpugnacao }}</td>
+											<td>{{ impugnacao.dtimpugancao }}</td>
+											<td>{{ impugnacao.idtipodocimpugnante }}</td>
+											<td>{{ impugnacao.nrdocimpugnante }}</td>
+											<td>
+												{% if impugnacao.resultado_impugnacao.count > 0 %}
+												<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+													<div class="panel panel-default">
+														<div class="panel-heading" role="tab" id="headingOne">
+															<h4 class="panel-title">
+																<a role="button" data-toggle="collapse" data-parent="#accordion" href="#impugnacaoResultadoCollapseOne{{impugnacao.id}}{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapseOne"> Resultado da Impugnacao </a>
+															</h4>
+														</div>
+														<div id="impugnacaoResultadoCollapseOne{{impugnacao.id}}{{ forloop.counter0 }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+															<div class="panel-body">
+																<table class="table">
+																	<tr>
+																		<th>Numero do Resultado</th>
+																		<th>Ano da Operacao</th>
+																		<th>Tipo de Resultado da Impugnacao</th>
+																	</tr>
+																	{% for resultado in impugnacao.resultado_impugnacao.all %}
+																	<tr>
+																		<td>{{ resultado.nrresultado }}</td>
+																		<td>{{ resultado.nranoresultado }}</td>
+																		<td>{{ resultado.idtiporesultadoimpugnacao }}</td>
+																	</tr>
+																	{% endfor %}
+																</table>
+															</div>
+														</div>
+													</div>
+												{% else %}
+												<p>Impugnacao sem resultado</p>
+												{% endif %}
+											</td>
+										</tr>
+										{% endfor %}
+									</table>
+								</div>
+							</div>
+						</div>
+					{% else %}
+					<p>Sem impugnacao</p>
+					{% endif %}
+				</td>
+				<!-- FIM impugnacaolicitacao -->
+				<!-- Licitante -->
+				<td>
+					{% if obj.licitantes.count > 0 %}
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+						<div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="headingOne">
+								<h4 class="panel-title">
+									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#licitanteCollapseOne{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapseOne"> Licitante </a>
+								</h4>
+							</div>
+							<div id="licitanteCollapseOne{{ forloop.counter0 }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+								<div class="panel-body">
+									<table class="table">
+										<tr>
+											<th>Tipo de Documento</th>
+											<th>Numero do Documento</th>
+											<th>CPF do Representante</th>
+											<th>Tipo do Cargo</th>
+											<th>Resultado</th>						
+										</tr>
+										{% for licitante in obj.licitantes.all %}
+										<tr>
+											<td>{{ licitante.idtipodoclicitante }}</td>
+											<td>{{ licitante.nrdoclicitante }}</td>
+											<td>{{ licitante.nrcpfrepresentante }}</td>
+											<td>{{ licitante.idtipocargofuncao }}</td>
+											<td>
+											{% if licitante.resultado_licitantes.count > 0 %}
+											{% for resultadolicitante in licitante.resultado_licitantes.all %}
+		        								{{ resultadolicitante.idtiporesultadolicitante }}
+											{% endfor %}
+											{% else %}
+											<p>Sem resultado</p>
+											{% endif %}
+											</td>
+										</tr>
+										{% endfor %}
+									</table>
+								</div>
+							</div>
+						</div>
+					{% else %}
+					<p>Sem licitante</p>
+					{% endif %}
+				</td>
+				<!-- FIM licitante -->
+				<!-- propostalicitacao -->
+				<td>
+					{% if obj.proposta_licitacao.count > 0 %}
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+						<div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="headingOne">
+								<h4 class="panel-title">
+									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#propostaCollapseOne{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapseOne"> Proposta </a>
+								</h4>
+							</div>
+							<div id="propostaCollapseOne{{ forloop.counter0 }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+								<div class="panel-body">
+									<table class="table">
+										<tr>
+											<th>Tipo de Documento</th>
+											<th>Numero do Documento</th>	
+											<th>Numero do Lote</th>
+											<th>Numero do Item</th>
+											<th>Quantidade do Item</th>
+											<th>Valor Unitario</th>			
+										</tr>
+										{% for proposta in obj.proposta_licitacao.all %}
+										<tr>
+											<td>{{ proposta.idtipodoclicitante }}</td>
+											<td>{{ proposta.nrdoclicitante }}</td>
+											<td>{{ proposta.nrlote }}</td>
+											<td>{{ proposta.nritem }}</td>
+											<td>{{ proposta.qtitem }}</td>
+											<td>{{ proposta.vlunitarioitem }}</td>
+										</tr>
+										{% endfor %}
+									</table>
+								</div>
+							</div>
+						</div>
+					{% else %}
+					<p>Sem proposta</p>
+					{% endif %}
+				</td>
+				<!-- FIM propostalicitacao -->
+				<!-- Vencedorlicitacao -->
+				<td>
+					{% if obj.vencedor_licitacao.count > 0 %}
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+						<div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="headingOne">
+								<h4 class="panel-title">
+									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#vencedorCollapseOne{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapseOne"> Vencedor </a>
+								</h4>
+							</div>
+							<div id="vencedorCollapseOne{{ forloop.counter0 }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+								<div class="panel-body">
+									<table class="table">
+										<tr>
+											<th>Tipo de Documento</th>
+											<th>Numero do Documento</th>
+											<th>Numero do Lote</th>
+											<th>Numero do Item</th>
+											<th>Quantidade do Item</th>
+											<th>Valor Homologado</th>
+											<th>Numero da Classificacao</th>
+											<th>Data da Homologacao</th>
+											<th>Cancelamento</th>	
+										</tr>
+										{% for vencedor in obj.vencedor_licitacao.all %}
+										<tr>
+											<td>{{ vencedor.idtipodocvencedor }}</td>
+											<td>{{ vencedor.nrdocvencedor }}</td>
+											<td>{{ vencedor.nrlote }}</td>
+											<td>{{ vencedor.nritem }}</td>
+											<td>{{ vencedor.qtitem }}</td>
+											<td>{{ vencedor.vlhomologado }}</td>
+											<td>{{ vencedor.nrclassificacao }}</td>
+											<td>{{ vencedor.dthomologacao }}</td>
+											<td>
+												{% if vencedor.resultado_vencedor.count > 0 %}
+												<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+													<div class="panel panel-default">
+														<div class="panel-heading" role="tab" id="headingOne">
+															<h4 class="panel-title">
+																<a role="button" data-toggle="collapse" data-parent="#accordion" href="#vencedorResultadoCollapseOne{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapseOne"> Resultado da vencedor </a>
+															</h4>
+														</div>
+														<div id="vencedorResultadoCollapseOne{{ forloop.counter0 }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+															<div class="panel-body">
+																<table class="table">
+																	<tr>
+																		<th>Numero da Operacao</th>
+																		<th>Ano da Operacao</th>
+																		<th>Data cancelamento</th>
+																		<th>Quantidade Item</th>
+																		<th>Valor cancelado</th>
+																		<th>Descricao do Motivo</th>
+																	</tr>
+																	{% for cancelamento in obj.vencedor.cancelamento_vencedor_licitacao.all %}
+																	<tr>
+																		<td>{{ cancelamento.nroperacao }}</td>
+																		<td>{{ cancelamento.nranooperacao }}</td>
+																		<td>{{ cancelamento.dtcancelamento }}</td>
+																		<td>{{ cancelamento.qtitem }}</td>
+																		<td>{{ cancelamento.vlcancelado }}</td>
+																		<td>{{ cancelamento.dsmotivo }}</td>
+																	</tr>
+																	{% endfor %}
+																</table>
+															</div>
+														</div>
+													</div>
+												{% else %}
+												<p>Sem cancelamento</p>
+												{% endif %}
+											</td>
+										</tr>
+										{% endfor %}
+									</table>
+								</div>
+							</div>
+						</div>
+					{% else %}
+					<p>Sem vencedor</p>
+					{% endif %}
+				</td>
+				<!-- FIM vencedorlicitacao -->
+		    </tr>
+			{% endfor %}
+			</table>
+</div>
+</div>
+</div>
+</div>
+{% endblock %}

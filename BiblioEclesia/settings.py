@@ -33,6 +33,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = (
     'biblio2',
+    'bootstrap3',
+    'django_admin_bootstrapped',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -111,3 +113,9 @@ DEFAULT_CHARSET = 'utf-8'
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)

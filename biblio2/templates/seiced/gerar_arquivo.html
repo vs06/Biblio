@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load seiced_tags %}
+
+{% block extrahead %}
+<script type="text/javascript">
+	function selectAll(elmt) {
+		$('[name="telas"]').prop('checked',	elmt.checked);
+		return true;
+	}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+		<h3 class="panel-title">Gerar arquivo</h3>
+	</div>
+	<div>
+
+	<form action="" method="post">{% csrf_token %}
+	<p>Selecione o quadrimestre
+		<select name="quadrimestre">
+		{% for q in quadrimestres %}
+  			<option value={{ q.id }}>{{ q.quad_nm }}o. / {{ q.quad_ano }}</option>
+  		{% endfor%}
+  		</select>
+  		</p>
+  		<p>Selecione quais arquivos deseja gerar:</p>
+		<div class="checkbox">
+			<label><input type="checkbox" name="select_all" value="" onclick="return selectAll(this);" >Selecionar Todos</label>
+		</div>
+		{% for modulo, modelos in modulos %}
+			<h3><ins>{{modulo}}</ins></h3>
+			{% for t in modelos %}
+				<div class="checkbox">
+					<labeL> <input type="checkbox" name="telas" value="{{t.name}}Admin" />{{t.verbose_name}}</label>
+				</div>
+			{%  endfor %}
+		{% endfor %}
+  		<button type="submit" class="btn btn-primary"> <span class="glyphicon glyphicon-save" aria-hidden="true"> </span> Gerar Arquivos</button>
+	</form>
+</div>
+
+</div>
+
+{% endblock %}
