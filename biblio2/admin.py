@@ -25,6 +25,7 @@ class LivroAdmin(admin.ModelAdmin):
     _fields=['titulo','autor','editora','edicao','isbn']
     list_display = _fields
     list_display_links = list_display
+    ordering = ['titulo']
 admin.site.register(Livro,LivroAdmin)
 
 class UsuarioAdmin(admin.ModelAdmin):

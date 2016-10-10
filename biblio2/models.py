@@ -13,35 +13,35 @@ from django.db import models
 
 
 class Autor(models.Model):
-    idautor = models.IntegerField(primary_key=True, editable=False)
-    nome = models.CharField(max_length=45, blank=True, null=True)
+    idautor = models.IntegerField(primary_key=True, editable=False, verbose_name="ID")
+    nome = models.CharField(max_length=45, blank=True, null=True, verbose_name="Nome")
     
     def __str__(self):
         return self.nome
 
 class Emprestimo(models.Model):
-    idemprestimo = models.IntegerField(primary_key=True, editable=False)
-    dataemprestimo = models.DateTimeField(blank=True, null=True)
-    datadevolucao = models.DateTimeField(blank=True, null=True)
-    usuarioid = models.ForeignKey('Usuario', db_column='usuarioid', blank=True, null=True)
-    livroid = models.ForeignKey('Livro', db_column='livroid', blank=True, null=True)
-    dataprevista = models.DateTimeField(blank=True, null=True)
+    idemprestimo = models.IntegerField(primary_key=True, editable=False, verbose_name="ID")
+    dataemprestimo = models.DateTimeField(blank=True, null=True, verbose_name="Data Emprestimo")
+    datadevolucao = models.DateTimeField(blank=True, null=True, verbose_name="Data Devolucao")
+    usuarioid = models.ForeignKey('Usuario', db_column='usuarioid', blank=True, null=True, verbose_name="Usuario")
+    livroid = models.ForeignKey('Livro', db_column='livroid', blank=True, null=True, verbose_name="Livro")
+    dataprevista = models.DateTimeField(blank=True, null=True, verbose_name="Data Prevista de Devolucao")
 
 
 class Livro(models.Model):
-    idlivro = models.AutoField(primary_key=True, editable=False)
-    titulo = models.CharField(max_length=45, blank=True, null=True)
-    autor = models.ForeignKey(Autor, db_column='autor', blank=True, null=True)
-    editora = models.CharField(max_length=45, blank=True, null=True)
-    edicao = models.CharField(max_length=15, blank=True, null=True)
-    isbn = models.CharField(max_length=20, blank=True, null=True)
+    idlivro = models.AutoField(primary_key=True, editable=False, verbose_name="ID")
+    titulo = models.CharField(max_length=45, blank=True, null=True, verbose_name="Titulo")
+    autor = models.ForeignKey(Autor, db_column='autor', blank=True, null=True, verbose_name="Autor")
+    editora = models.CharField(max_length=45, blank=True, null=True, verbose_name="Editora")
+    edicao = models.CharField(max_length=15, blank=True, null=True, verbose_name="Edicao")
+    isbn = models.CharField(max_length=20, blank=True, null=True, verbose_name="ISBN")
     
     def __str__(self):
         return self.titulo
 
 class Usuario(models.Model):
-    idusuario = models.IntegerField(primary_key=True, editable=False)
-    nome = models.CharField(max_length=95)
+    idusuario = models.IntegerField(primary_key=True, editable=False, verbose_name="ID")
+    nome = models.CharField(max_length=95, verbose_name="Nome")
     
     def __str__(self):
         return self.nome
