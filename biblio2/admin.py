@@ -4,8 +4,10 @@ Created on 09/06/2015
 @author: victor.sousa
 '''
 from django.contrib import admin
-from biblio2.models import Autor, Livro, Usuario, Emprestimo
 from django.utils.translation import ugettext_lazy
+
+from biblio2.models import Autor, Livro, Usuario, Emprestimo, Idioma, Editora
+
 
 admin.site.site_title = ugettext_lazy('BiblioEclesia')
 admin.site.site_header = ugettext_lazy('BiblioEclesia')
@@ -44,3 +46,18 @@ class EmprestimoAdmin(admin.ModelAdmin):
     list_display_links = list_display
 admin.site.register(Emprestimo,EmprestimoAdmin)
 
+class IdiomaAdmin(admin.ModelAdmin):
+    search_fields=[]
+    list_filter=['nome', 'sigla']
+    _fields=['nome', 'sigla']
+    list_display = _fields
+    list_display_links = list_display
+admin.site.register(Idioma,IdiomaAdmin)
+
+class EditoraAdmin(admin.ModelAdmin):
+    search_fields=[]
+    list_filter=['nome']
+    _fields=['nome']
+    list_display = _fields
+    list_display_links = list_display
+admin.site.register(Editora,EditoraAdmin)
