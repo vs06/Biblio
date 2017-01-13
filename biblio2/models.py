@@ -9,8 +9,10 @@
 # into your database.
 from __future__ import unicode_literals
 
-from django.db import models
+from datetime import timedelta
 
+from django.db import models
+import tagulous.models
 
 class Autor(models.Model):
     idautor = models.IntegerField(primary_key=True, editable=False, verbose_name="ID")
@@ -25,8 +27,17 @@ class Emprestimo(models.Model):
     datadevolucao = models.DateTimeField(blank=True, null=True, verbose_name="Data Devolucao")
     usuarioid = models.ForeignKey('Usuario', db_column='usuarioid', blank=True, null=True, verbose_name="Usuario")
     livroid = models.ForeignKey('Livro', db_column='livroid', blank=True, null=True, verbose_name="Livro")
-    dataprevista = models.DateTimeField(blank=True, null=True, verbose_name="Data Prevista de Devolucao")
+    dataprevista = models.DateTimeField(blank=True, null=True, verbose_name="Data Prevista de Devolucao", editable=False)
 
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if not self.idemprestimo:
+            self.dataprevista = self.dataemprestimo + timedelta(days=14)
+        return models.Model.save(self, force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+
+class Assunto(tagulous.models.TagTreeModel):
+    class TagMeta:
+        space_delimiter = False
+        #autocomplete_view = 'livro_assuntos_autocomplete'
 
 class Livro(models.Model):
     idlivro = models.AutoField(primary_key=True, editable=False, verbose_name="ID")
@@ -42,6 +53,14 @@ class Livro(models.Model):
     idioma = models.ForeignKey('Idioma', db_column='idioma', blank=True, null=True, default=1, verbose_name="Idioma")
     #vários autores?
     #palavras chave ou assunto?
+    assunto = tagulous.models.TagField(
+        Assunto, help_text = 'Digite um ou mais assuntos separados por virgula',
+    )
+    #    force_lowercase=True,
+    #    max_count=5,
+    #    space_delimiter = False,
+    #    help_text = 'Digite um ou mais assuntos separados por virgula'
+    #)
     
     def __str__(self):
         return self.titulo
