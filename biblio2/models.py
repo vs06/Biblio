@@ -41,8 +41,8 @@ class Assunto(tagulous.models.TagTreeModel):
 
 class Livro(models.Model):
     idlivro = models.AutoField(primary_key=True, editable=False, verbose_name="ID")
-    titulo = models.CharField(max_length=45, verbose_name="Titulo")
-    subtitulo = models.CharField(max_length=45, blank=True, null=True, verbose_name="Subtitulo")
+    titulo = models.CharField(max_length=95, verbose_name="Titulo")
+    subtitulo = models.CharField(max_length=95, blank=True, null=True, verbose_name="Subtitulo")
     autor = models.ForeignKey('Autor', db_column='autor', verbose_name="Autor")
     descricao = models.TextField(blank=True, null=True, verbose_name="Descricao")
     paginas = models.IntegerField(blank=True, null=True, verbose_name="Num. Paginas")
