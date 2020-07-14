@@ -1,4 +1,5 @@
+django==1.11.29
 django-tagulous
 django-bootstrap3
 django-admin-bootstrapped
-django==1.11.29
+gunicorn 
